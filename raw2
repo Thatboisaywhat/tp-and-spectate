@@ -5,7 +5,7 @@ local starterGui = game:GetService("StarterGui")
 
 wait(3)
 starterGui:SetCore("SendNotification", {
-Title = "★QuizBot made by epic★",
+Title = "★QuizBot was made by damiun11★",
 Text = "Thanks for using this script :D "
 })
 wait(4)
