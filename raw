@@ -1,0 +1,169 @@
+-- Destroy old GUI if it exists
+local existing = game.Players.LocalPlayer:FindFirstChild("PlayerGui"):FindFirstChild("TeleportSpectateGUI")
+if existing then existing:Destroy() end
+
+-- Create ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "TeleportSpectateGUI"
+gui.ResetOnSpawn = false
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 400, 0, 500)
+frame.Position = UDim2.new(0, 20, 0.5, -250)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+frame.Active = true
+frame.Draggable = true
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -40, 0, 40)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.Text = "🔹 Teleport & Spectate GUI"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+-- Close Button
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.Text = "❌"
+closeBtn.TextColor3 = Color3.fromRGB(255, 70, 70)
+closeBtn.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 18
+closeBtn.Parent = frame
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- Refresh Button
+local refreshBtn = Instance.new("TextButton")
+refreshBtn.Size = UDim2.new(0, 80, 0, 30)
+refreshBtn.Position = UDim2.new(0, 10, 0, 45)
+refreshBtn.Text = "🔄 Refresh"
+refreshBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+refreshBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+refreshBtn.Font = Enum.Font.SourceSans
+refreshBtn.TextSize = 18
+refreshBtn.Parent = frame
+
+-- Scrolling player list
+local playerList = Instance.new("ScrollingFrame")
+playerList.Size = UDim2.new(1, -20, 1, -90)
+playerList.Position = UDim2.new(0, 10, 0, 85)
+playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+playerList.ScrollBarThickness = 8
+playerList.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+playerList.BorderSizePixel = 0
+playerList.Parent = frame
+
+-- Spectate Function
+local function spectatePlayer(targetPlayer)
+    local cam = workspace.CurrentCamera
+    if targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid") then
+        cam.CameraSubject = targetPlayer.Character.Humanoid
+    end
+end
+
+-- Teleport Function
+local function teleportToPlayer(targetPlayer)
+    local localChar = game.Players.LocalPlayer.Character
+    if localChar and localChar:FindFirstChild("HumanoidRootPart") and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        localChar:MoveTo(targetPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 3, 0))
+    end
+end
+
+-- Load player buttons
+local function loadPlayerList()
+    playerList:ClearAllChildren()
+    local yPos = 0
+
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            local container = Instance.new("Frame")
+            container.Size = UDim2.new(1, 0, 0, 40)
+            container.Position = UDim2.new(0, 0, 0, yPos)
+            container.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+            container.BorderSizePixel = 0
+            container.Parent = playerList
+
+            local nameLabel = Instance.new("TextLabel")
+            nameLabel.Size = UDim2.new(0.4, 0, 1, 0)
+            nameLabel.Position = UDim2.new(0, 5, 0, 0)
+            nameLabel.Text = player.Name
+            nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            nameLabel.Font = Enum.Font.SourceSans
+            nameLabel.TextSize = 18
+            nameLabel.BackgroundTransparency = 1
+            nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            nameLabel.Parent = container
+
+            local tpBtn = Instance.new("TextButton")
+            tpBtn.Size = UDim2.new(0, 70, 0, 30)
+            tpBtn.Position = UDim2.new(0.5, 0, 0.5, -15)
+            tpBtn.Text = "Teleport"
+            tpBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 150)
+            tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            tpBtn.Font = Enum.Font.SourceSansBold
+            tpBtn.TextSize = 16
+            tpBtn.Parent = container
+            tpBtn.MouseButton1Click:Connect(function()
+                teleportToPlayer(player)
+            end)
+
+            local specBtn = Instance.new("TextButton")
+            specBtn.Size = UDim2.new(0, 70, 0, 30)
+            specBtn.Position = UDim2.new(1, -80, 0.5, -15)
+            specBtn.Text = "Spectate"
+            specBtn.BackgroundColor3 = Color3.fromRGB(100, 0, 150)
+            specBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+            specBtn.Font = Enum.Font.SourceSansBold
+            specBtn.TextSize = 16
+            specBtn.Parent = container
+            specBtn.MouseButton1Click:Connect(function()
+                spectatePlayer(player)
+            end)
+
+            yPos = yPos + 45
+        end
+    end
+
+-- Unspectate Button
+local unspecBtn = Instance.new("TextButton")
+unspecBtn.Size = UDim2.new(0, 110, 0, 30)
+unspecBtn.Position = UDim2.new(0, 100, 0, 45)
+unspecBtn.Text = "👁️ Unspectate"
+unspecBtn.BackgroundColor3 = Color3.fromRGB(80, 60, 60)
+unspecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+unspecBtn.Font = Enum.Font.SourceSans
+unspecBtn.TextSize = 18
+unspecBtn.Parent = frame
+
+unspecBtn.MouseButton1Click:Connect(function()
+    local cam = workspace.CurrentCamera
+    local char = game.Players.LocalPlayer.Character
+    if char and char:FindFirstChild("Humanoid") then
+        cam.CameraSubject = char.Humanoid
+    end
+end)
+
+    playerList.CanvasSize = UDim2.new(0, 0, 0, yPos)
+end
+
+-- Load initially
+loadPlayerList()
+
+-- Refresh Button click
+refreshBtn.MouseButton1Click:Connect(loadPlayerList)
+
+-- Update when players join/leave
+game.Players.PlayerAdded:Connect(loadPlayerList)
+game.Players.PlayerRemoving:Connect(loadPlayerList)
