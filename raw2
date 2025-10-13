@@ -1,18 +1,4 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
-local starterGui = game:GetService("StarterGui")
 
-wait(3)
-starterGui:SetCore("SendNotification", {
-Title = "★QuizBot was made by damiun11★",
-Text = "Thanks for using this script :D "
-})
-wait(4)
-starterGui:SetCore("SendNotification", {
-Title = "★Changelogs★",
-Text = "Updated some questions bc they said it doesnt make any sense Sorry😔"
-})
 local CustomCategoryManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/Damian-11/quizbot/master/quizbot.luau"))()
 local dandy = CustomCategoryManager.New("Dandy's World", "easy")
 dandy:Add("What 'gte' means?", {"Get to elevator", "Get to exit", "Get to entrance", "Get on elevator"}, 1)
