@@ -55,6 +55,37 @@ refreshBtn.Font = Enum.Font.SourceSans
 refreshBtn.TextSize = 18
 refreshBtn.Parent = frame
 
+-- Unspectate Button
+local unspecBtn = Instance.new("TextButton")
+unspecBtn.Size = UDim2.new(0, 110, 0, 30)
+unspecBtn.Position = UDim2.new(0, 100, 0, 45)
+unspecBtn.Text = "👁️ Unspectate"
+unspecBtn.BackgroundColor3 = Color3.fromRGB(80, 60, 60)
+unspecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+unspecBtn.Font = Enum.Font.SourceSans
+unspecBtn.TextSize = 18
+unspecBtn.Parent = frame
+unspecBtn.MouseButton1Click:Connect(function()
+    local cam = workspace.CurrentCamera
+    local char = game.Players.LocalPlayer.Character
+    if char and char:FindFirstChild("Humanoid") then
+        cam.CameraSubject = char.Humanoid
+    end
+end)
+
+-- Search Bar
+local searchBox = Instance.new("TextBox")
+searchBox.Size = UDim2.new(0, 180, 0, 30)
+searchBox.Position = UDim2.new(0, 220, 0, 45)
+searchBox.PlaceholderText = "🔍 Search player..."
+searchBox.Text = ""
+searchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBox.Font = Enum.Font.SourceSans
+searchBox.TextSize = 18
+searchBox.ClearTextOnFocus = false
+searchBox.Parent = frame
+
 -- Scrolling player list
 local playerList = Instance.new("ScrollingFrame")
 playerList.Size = UDim2.new(1, -20, 1, -90)
@@ -81,13 +112,13 @@ local function teleportToPlayer(targetPlayer)
     end
 end
 
--- Load player buttons
-local function loadPlayerList()
+-- Load player buttons with optional filter
+local function loadPlayerList(filterText)
     playerList:ClearAllChildren()
     local yPos = 0
 
     for _, player in ipairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
+        if player ~= game.Players.LocalPlayer and (not filterText or string.find(player.Name:lower(), filterText:lower())) then
             local container = Instance.new("Frame")
             container.Size = UDim2.new(1, 0, 0, 40)
             container.Position = UDim2.new(0, 0, 0, yPos)
@@ -136,34 +167,26 @@ local function loadPlayerList()
         end
     end
 
--- Unspectate Button
-local unspecBtn = Instance.new("TextButton")
-unspecBtn.Size = UDim2.new(0, 110, 0, 30)
-unspecBtn.Position = UDim2.new(0, 100, 0, 45)
-unspecBtn.Text = "👁️ Unspectate"
-unspecBtn.BackgroundColor3 = Color3.fromRGB(80, 60, 60)
-unspecBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-unspecBtn.Font = Enum.Font.SourceSans
-unspecBtn.TextSize = 18
-unspecBtn.Parent = frame
-
-unspecBtn.MouseButton1Click:Connect(function()
-    local cam = workspace.CurrentCamera
-    local char = game.Players.LocalPlayer.Character
-    if char and char:FindFirstChild("Humanoid") then
-        cam.CameraSubject = char.Humanoid
-    end
-end)
-
     playerList.CanvasSize = UDim2.new(0, 0, 0, yPos)
 end
 
--- Load initially
-loadPlayerList()
+-- Initial load
+loadPlayerList(searchBox.Text)
 
 -- Refresh Button click
-refreshBtn.MouseButton1Click:Connect(loadPlayerList)
+refreshBtn.MouseButton1Click:Connect(function()
+    loadPlayerList(searchBox.Text)
+end)
+
+-- Search live filter
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    loadPlayerList(searchBox.Text)
+end)
 
 -- Update when players join/leave
-game.Players.PlayerAdded:Connect(loadPlayerList)
-game.Players.PlayerRemoving:Connect(loadPlayerList)
+game.Players.PlayerAdded:Connect(function()
+    loadPlayerList(searchBox.Text)
+end)
+game.Players.PlayerRemoving:Connect(function()
+    loadPlayerList(searchBox.Text)
+end)
