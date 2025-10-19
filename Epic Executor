@@ -1,9 +1,102 @@
-local CoreGui = game:GetService("CoreGui")
-local gui = Instance.new("ScreenGui", CoreGui)
-gui.Name = "SynassiumExecutor"
-gui.ResetOnSpawn = false
+local keyGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+keyGui.Name = "EpicKeySystem"
+keyGui.ResetOnSpawn = false
 
-local frame = Instance.new("Frame", gui)
+local keyFrame = Instance.new("Frame", keyGui)
+keyFrame.Size = UDim2.new(0, 320, 0, 200)
+keyFrame.Position = UDim2.new(0.5, -160, 0.5, -100)
+keyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+keyFrame.BorderSizePixel = 0
+keyFrame.Active = true
+keyFrame.Draggable = true
+
+local header = Instance.new("Frame", keyFrame)
+header.Size = UDim2.new(1, 0, 0, 35)
+header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+local gradient = Instance.new("UIGradient", header)
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 100)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))
+}
+gradient.Rotation = 45
+
+local title = Instance.new("TextLabel", header)
+title.Size = UDim2.new(1, 0, 1, 0)
+title.BackgroundTransparency = 1
+title.Text = "🔐 Epic Key System"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+
+local keyBox = Instance.new("TextBox", keyFrame)
+keyBox.Size = UDim2.new(0.9, 0, 0, 30)
+keyBox.Position = UDim2.new(0.05, 0, 0, 50)
+keyBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+keyBox.TextColor3 = Color3.new(1, 1, 1)
+keyBox.Font = Enum.Font.Code
+keyBox.TextSize = 14
+keyBox.PlaceholderText = "Paste your key here..."
+keyBox.Text = ""
+
+local submitBtn = Instance.new("TextButton", keyFrame)
+submitBtn.Size = UDim2.new(0.9, 0, 0, 30)
+submitBtn.Position = UDim2.new(0.05, 0, 0, 90)
+submitBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+submitBtn.TextColor3 = Color3.fromRGB(0, 255, 200)
+submitBtn.Font = Enum.Font.GothamBold
+submitBtn.TextSize = 14
+submitBtn.Text = "✅ Submit Key"
+submitBtn.BorderSizePixel = 0
+
+local linkBtn = Instance.new("TextButton", keyFrame)
+linkBtn.Size = UDim2.new(0.9, 0, 0, 30)
+linkBtn.Position = UDim2.new(0.05, 0, 0, 130)
+linkBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+linkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+linkBtn.Font = Enum.Font.GothamBold
+linkBtn.TextSize = 14
+linkBtn.Text = "🔗 Get Key (via Workink)"
+linkBtn.BorderSizePixel = 0
+
+local status = Instance.new("TextLabel", keyFrame)
+status.Size = UDim2.new(1, 0, 0, 30)
+status.Position = UDim2.new(0, 0, 1, -30)
+status.BackgroundTransparency = 1
+status.Text = ""
+status.TextColor3 = Color3.fromRGB(255, 80, 80)
+status.Font = Enum.Font.GothamBold
+status.TextSize = 14
+
+-- 🔗 Replace this with your actual Workink link
+local keyLink = "https://workink.net/26Ra/sv236dlr"
+
+linkBtn.MouseButton1Click:Connect(function()
+    setclipboard(keyLink)
+    status.Text = "📋 Link copied to clipboard!"
+end)
+
+-- 🔐 Replace this with the actual key you give users
+local validKey = "Df2df_rw7he_fv6dq"
+
+local executorGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+executorGui.Name = "SynassiumExecutor"
+executorGui.ResetOnSpawn = false
+executorGui.Enabled = false
+
+submitBtn.MouseButton1Click:Connect(function()
+    if keyBox.Text == validKey then
+        keyGui:Destroy()
+        executorGui.Enabled = true
+        print("✅ Key accepted")
+    else
+        keyBox.Text = ""
+        status.Text = "❌ Invalid key. Try again..."
+    end
+end)
+
+
+-- 🧱 Main Frame
+local frame = Instance.new("Frame", executorGui)
 frame.Size = UDim2.new(0, 600, 0, 400)
 frame.Position = UDim2.new(0.5, -300, 0.5, -200)
 frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
@@ -11,12 +104,17 @@ frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
 
+-- 🧠 Header
 local header = Instance.new("Frame", frame)
 header.Size = UDim2.new(1, 0, 0, 35)
 header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 local gradient = Instance.new("UIGradient", header)
-gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 100)),ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))}
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 100)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))
+}
 gradient.Rotation = 45
+
 local title = Instance.new("TextLabel", header)
 title.Size = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
@@ -25,6 +123,7 @@ title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 
+-- 🧾 Script Editor
 local scroll = Instance.new("ScrollingFrame", frame)
 scroll.Size = UDim2.new(1, -20, 0.95, -75)
 scroll.Position = UDim2.new(0, 10, 0, 45)
@@ -61,6 +160,30 @@ editor.MultiLine = true
 editor.TextWrapped = true
 editor.Text = "-- Paste your script here"
 
+ --close button--
+local closeExecutor = Instance.new("TextButton", frame)
+closeExecutor.Size = UDim2.new(0, 30, 0, 30)
+closeExecutor.Position = UDim2.new(1, -35, 0, 5)
+closeExecutor.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+closeExecutor.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeExecutor.Font = Enum.Font.GothamBold
+closeExecutor.TextSize = 16
+closeExecutor.Text = "X"
+closeExecutor.BorderSizePixel = 0
+
+closeExecutor.MouseEnter:Connect(function()
+    closeExecutor.BackgroundColor3 = Color3.fromRGB(100, 30, 30)
+end)
+
+closeExecutor.MouseLeave:Connect(function()
+    closeExecutor.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+end)
+
+closeExecutor.MouseButton1Click:Connect(function()
+    executorGui:Destroy()
+end)
+
+-- 🔘 Button Creator
 local function createButton(text, xOffset)
     local btn = Instance.new("TextButton", frame)
     btn.Size = UDim2.new(0, 90, 0, 30)
@@ -77,11 +200,13 @@ local function createButton(text, xOffset)
     return btn
 end
 
+-- 🔘 Buttons
 local exec = createButton("⚡ Execute", 10)
 local clear = createButton("🗑 Clear", 110)
 local save = createButton("💾 Save", 210)
 local open = createButton("📁 Open", 310)
 
+-- ⚡ Execute Script
 exec.MouseButton1Click:Connect(function()
     local code = editor.Text
     local func, err = loadstring(code)
@@ -93,9 +218,13 @@ exec.MouseButton1Click:Connect(function()
     end
 end)
 
-clear.MouseButton1Click:Connect(function() editor.Text = "" end)
+-- 🗑 Clear Editor
+clear.MouseButton1Click:Connect(function()
+    editor.Text = ""
+end)
 
-local savePopup = Instance.new("Frame", gui)
+-- 💾 Save Popup
+local savePopup = Instance.new("Frame", executorGui)
 savePopup.Size = UDim2.new(0, 300, 0, 120)
 savePopup.Position = UDim2.new(0.5, -150, 0.5, -60)
 savePopup.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -130,6 +259,7 @@ confirmSave.TextSize = 14
 confirmSave.Text = "💾 Save"
 confirmSave.BorderSizePixel = 0
 
+-- 💾 Save Logic
 save.MouseButton1Click:Connect(function()
     savePopup.Visible = true
     nameBox.Text = ""
@@ -138,7 +268,7 @@ end)
 confirmSave.MouseButton1Click:Connect(function()
     local name = nameBox.Text:gsub("[^%w_]", "")
     if name ~= "" and writefile then
-	local filename = "Epic_" .. name .. ".lua"
+        local filename = "Epic_" .. name .. ".lua"
         writefile(filename, editor.Text)
         print("✅ Saved as", filename)
         savePopup.Visible = false
@@ -146,8 +276,8 @@ confirmSave.MouseButton1Click:Connect(function()
         warn("❌ Invalid name or writefile unsupported")
     end
 end)
-
-local browser = Instance.new("Frame", gui)
+-- 📂 Script Browser
+local browser = Instance.new("Frame", executorGui)
 browser.Size = UDim2.new(0, 300, 0, 350)
 browser.Position = UDim2.new(0.5, -150, 0.5, -175)
 browser.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
@@ -265,4 +395,3 @@ open.MouseButton1Click:Connect(function()
         warn("❌ listfiles not supported")
     end
 end)
-
