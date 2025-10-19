@@ -1,0 +1,268 @@
+local CoreGui = game:GetService("CoreGui")
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "SynassiumExecutor"
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 600, 0, 400)
+frame.Position = UDim2.new(0.5, -300, 0.5, -200)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+local header = Instance.new("Frame", frame)
+header.Size = UDim2.new(1, 0, 0, 35)
+header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+local gradient = Instance.new("UIGradient", header)
+gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 100)),ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 255))}
+gradient.Rotation = 45
+local title = Instance.new("TextLabel", header)
+title.Size = UDim2.new(1, 0, 1, 0)
+title.BackgroundTransparency = 1
+title.Text = "Epic Executor"
+title.TextColor3 = Color3.new(1, 1, 1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Size = UDim2.new(1, -20, 0.95, -75)
+scroll.Position = UDim2.new(0, 10, 0, 45)
+scroll.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+scroll.BorderSizePixel = 0
+scroll.CanvasSize = UDim2.new(0, 0, 0, 14000)
+scroll.ScrollBarThickness = 6
+scroll.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+
+local gutter = Instance.new("TextLabel", scroll)
+gutter.Size = UDim2.new(0, 40, 0, 14000)
+gutter.Position = UDim2.new(0, 0, 0, 0)
+gutter.BackgroundTransparency = 1
+gutter.TextColor3 = Color3.fromRGB(100, 100, 100)
+gutter.Font = Enum.Font.Code
+gutter.TextSize = 14
+gutter.TextXAlignment = Enum.TextXAlignment.Right
+gutter.TextYAlignment = Enum.TextYAlignment.Top
+local gutterText = ""
+for i = 1, 1000 do gutterText = gutterText .. i .. "\n" end
+gutter.Text = gutterText
+
+local editor = Instance.new("TextBox", scroll)
+editor.Size = UDim2.new(1, -40, 0, 14000)
+editor.Position = UDim2.new(0, 40, 0, 0)
+editor.BackgroundTransparency = 1
+editor.TextColor3 = Color3.new(1, 1, 1)
+editor.Font = Enum.Font.Code
+editor.TextSize = 14
+editor.TextXAlignment = Enum.TextXAlignment.Left
+editor.TextYAlignment = Enum.TextYAlignment.Top
+editor.ClearTextOnFocus = false
+editor.MultiLine = true
+editor.TextWrapped = true
+editor.Text = "-- Paste your script here"
+
+local function createButton(text, xOffset)
+    local btn = Instance.new("TextButton", frame)
+    btn.Size = UDim2.new(0, 90, 0, 30)
+    btn.Position = UDim2.new(0, xOffset, 1, -35)
+    btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+    btn.TextColor3 = Color3.fromRGB(0, 255, 200)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.Text = text
+    btn.BorderSizePixel = 0
+    btn.AutoButtonColor = false
+    btn.MouseEnter:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(60, 60, 60) end)
+    btn.MouseLeave:Connect(function() btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45) end)
+    return btn
+end
+
+local exec = createButton("⚡ Execute", 10)
+local clear = createButton("🗑 Clear", 110)
+local save = createButton("💾 Save", 210)
+local open = createButton("📁 Open", 310)
+
+exec.MouseButton1Click:Connect(function()
+    local code = editor.Text
+    local func, err = loadstring(code)
+    if func then
+        local success, result = pcall(func)
+        if not success then warn("Execution error:", result) end
+    else
+        warn("Loadstring failed:", err)
+    end
+end)
+
+clear.MouseButton1Click:Connect(function() editor.Text = "" end)
+
+local savePopup = Instance.new("Frame", gui)
+savePopup.Size = UDim2.new(0, 300, 0, 120)
+savePopup.Position = UDim2.new(0.5, -150, 0.5, -60)
+savePopup.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+savePopup.BorderSizePixel = 0
+savePopup.Visible = false
+
+local popupTitle = Instance.new("TextLabel", savePopup)
+popupTitle.Size = UDim2.new(1, 0, 0, 30)
+popupTitle.BackgroundTransparency = 1
+popupTitle.Text = "💾 Save Script As"
+popupTitle.TextColor3 = Color3.new(1, 1, 1)
+popupTitle.Font = Enum.Font.GothamBold
+popupTitle.TextSize = 16
+
+local nameBox = Instance.new("TextBox", savePopup)
+nameBox.Size = UDim2.new(1, -20, 0, 30)
+nameBox.Position = UDim2.new(0, 10, 0, 40)
+nameBox.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+nameBox.TextColor3 = Color3.new(1, 1, 1)
+nameBox.Font = Enum.Font.Code
+nameBox.TextSize = 14
+nameBox.PlaceholderText = "Enter script name..."
+nameBox.Text = ""
+
+local confirmSave = Instance.new("TextButton", savePopup)
+confirmSave.Size = UDim2.new(0, 90, 0, 30)
+confirmSave.Position = UDim2.new(1, -100, 1, -35)
+confirmSave.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+confirmSave.TextColor3 = Color3.fromRGB(0, 255, 200)
+confirmSave.Font = Enum.Font.GothamBold
+confirmSave.TextSize = 14
+confirmSave.Text = "💾 Save"
+confirmSave.BorderSizePixel = 0
+
+save.MouseButton1Click:Connect(function()
+    savePopup.Visible = true
+    nameBox.Text = ""
+end)
+
+confirmSave.MouseButton1Click:Connect(function()
+    local name = nameBox.Text:gsub("[^%w_]", "")
+    if name ~= "" and writefile then
+	local filename = "Epic_" .. name .. ".lua"
+        writefile(filename, editor.Text)
+        print("✅ Saved as", filename)
+        savePopup.Visible = false
+    else
+        warn("❌ Invalid name or writefile unsupported")
+    end
+end)
+
+local browser = Instance.new("Frame", gui)
+browser.Size = UDim2.new(0, 300, 0, 350)
+browser.Position = UDim2.new(0.5, -150, 0.5, -175)
+browser.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+browser.BorderSizePixel = 0
+browser.Visible = false
+
+local browserTitle = Instance.new("TextLabel", browser)
+browserTitle.Size = UDim2.new(1, 0, 0, 35)
+browserTitle.BackgroundTransparency = 1
+browserTitle.Text = "📂 Script Browser"
+browserTitle.TextColor3 = Color3.new(1, 1, 1)
+browserTitle.Font = Enum.Font.GothamBold
+browserTitle.TextSize = 16
+
+local closeBtn = Instance.new("TextButton", browser)
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 16
+closeBtn.Text = "X"
+closeBtn.BorderSizePixel = 0
+closeBtn.MouseEnter:Connect(function() closeBtn.BackgroundColor3 = Color3.fromRGB(100, 30, 30) end)
+closeBtn.MouseLeave:Connect(function() closeBtn.BackgroundColor3 = Color3.fromRGB(60, 20, 20) end)
+closeBtn.MouseButton1Click:Connect(function()
+    browser.Visible = false
+end)
+
+local scriptList = Instance.new("ScrollingFrame", browser)
+scriptList.Size = UDim2.new(1, -20, 1, -75)
+scriptList.Position = UDim2.new(0, 10, 0, 40)
+scriptList.BackgroundTransparency = 1
+scriptList.CanvasSize = UDim2.new(0, 0, 0, 1000)
+scriptList.ScrollBarThickness = 6
+scriptList.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scriptList.VerticalScrollBarInset = Enum.ScrollBarInset.ScrollBar
+
+local loadBtn = Instance.new("TextButton", browser)
+loadBtn.Size = UDim2.new(0, 90, 0, 30)
+loadBtn.Position = UDim2.new(0, 10, 1, -35)
+loadBtn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+loadBtn.TextColor3 = Color3.fromRGB(0, 255, 200)
+loadBtn.Font = Enum.Font.GothamBold
+loadBtn.TextSize = 14
+loadBtn.Text = "📂 Load"
+loadBtn.BorderSizePixel = 0
+
+local selectedScript = nil
+
+loadBtn.MouseButton1Click:Connect(function()
+    if selectedScript and readfile then
+        editor.Text = readfile(selectedScript)
+        print("📂 Loaded:", selectedScript)
+        browser.Visible = false
+    end
+end)
+
+open.MouseButton1Click:Connect(function()
+    if listfiles then
+        for _, child in ipairs(scriptList:GetChildren()) do
+            if child:IsA("Frame") then child:Destroy() end
+        end
+        local files = listfiles("")
+        for _, file in ipairs(files) do
+            if file:match("^Epic_.*%.lua$") then
+                local row = Instance.new("Frame", scriptList)
+                row.Size = UDim2.new(1, -10, 0, 30)
+                row.BackgroundTransparency = 1
+
+                local btn = Instance.new("TextButton", row)
+                btn.Size = UDim2.new(0.75, 0, 1, 0)
+                btn.Position = UDim2.new(0, 0, 0, 0)
+                btn.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+                btn.Font = Enum.Font.Code
+                btn.TextSize = 14
+                btn.Text = file
+                btn.BorderSizePixel = 0
+
+                local del = Instance.new("TextButton", row)
+                del.Size = UDim2.new(0.25, -5, 1, 0)
+                del.Position = UDim2.new(0.75, 5, 0, 0)
+                del.BackgroundColor3 = Color3.fromRGB(60, 20, 20)
+                del.TextColor3 = Color3.fromRGB(255, 255, 255)
+                del.Font = Enum.Font.GothamBold
+                del.TextSize = 14
+                del.Text = "🗑"
+                del.BorderSizePixel = 0
+
+                btn.MouseButton1Click:Connect(function()
+                    selectedScript = file
+                    for _, other in ipairs(scriptList:GetChildren()) do
+                        if other:IsA("Frame") and other:FindFirstChildOfClass("TextButton") then
+                            other:FindFirstChildOfClass("TextButton").BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                        end
+                    end
+                    btn.BackgroundColor3 = Color3.fromRGB(0, 255, 200)
+                end)
+
+                del.MouseButton1Click:Connect(function()
+                    if delfile then
+                        delfile(file)
+                        row:Destroy()
+                        print("🗑 Deleted:", file)
+                        if selectedScript == file then selectedScript = nil end
+                    else
+                        warn("❌ delfile not supported")
+                    end
+                end)
+            end
+        end
+        browser.Visible = true
+    else
+        warn("❌ listfiles not supported")
+    end
+end)
+
