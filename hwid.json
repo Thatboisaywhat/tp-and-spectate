@@ -1,6 +1,6 @@
 {
   "blacklist": [
-    "Potassium",
+    "d79a7d73c6b7e7447982d5bfb84a19585d6fececeeb4d3a05a89f194b77fc7b436bcd4a4f0494807ac9436ccf158c8cf986cbb176c558781d88157daf2673dc4",
     "Synapse X v3.10.2"
   ],
   "whitelist": [
