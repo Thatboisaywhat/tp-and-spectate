@@ -1,0 +1,9 @@
+{
+  "blacklist": [
+    "Potassium",
+    "Synapse X v3.10.2"
+  ],
+  "whitelist": [
+    "epics's HWID"
+  ]
+}
